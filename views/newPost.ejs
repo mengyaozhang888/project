@@ -1,0 +1,96 @@
+<%- include('./partials/header', {title: 'New Post', user: user, error: '',
+success: '', input: ''}) %>
+
+<div class="d-flex align-items-center justify-content-center vh-100">
+  <div class="col-lg-6 col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white">
+        <h2 class="mb-0 text-center">New Post</h2>
+      </div>
+      <div class="card-body p-3">
+        <p class="lead">
+          Share your latest thoughts and updates by creating a new post. You can
+          add images to make your post more engaging.
+        </p>
+        <form
+          action="/posts/add"
+          method="post"
+          enctype="multipart/form-data"
+          onsubmit="return validationForm()"
+        >
+          <%if(success){%>
+          <div class="alert alert-success" role="alert"><%=success%></div>
+          <%}%> <%if(error){%>
+          <div class="alert alert-danger" role="alert"><%=error%></div>
+          <%}%>
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              placeholder="Title"
+              value="<%= input ? input.title : '' %>"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea
+              class="form-control"
+              id="content"
+              name="content"
+              cols="30"
+              rows="10"
+            >
+<%= input ? input.content : '' %>
+            </textarea>
+          </div>
+          <div class="mb-3">
+            <label for="images" class="form-label">Image</label>
+            <input
+              multiple
+              type="file"
+              class="form-control"
+              id="images"
+              name="images"
+            />
+          </div>
+          <div class="mb-3" id="image-preview"></div>
+          <button type="submit" class="btn btn-dark">
+            <i class="fas fa-plus-circle"></i> Add Post
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const imageInput = document.getElementById("images");
+    imageInput.addEventListener("change", function () {
+      const preview = document.getElementById("image-preview");
+      preview.innerHTML = "";
+      const files = imageInput.files;
+      console.log(files);
+      for (let i = 0; i < files.length; i++) {
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(files[i]);
+        img.classList.add("img-thumbnail", "mr-2", "mb-2");
+        img.style.maxWidth = "150px";
+        preview.appendChild(img);
+      }
+    });
+  });
+  function validationForm() {
+    const title = document.getElementById("title").value;
+    const content = document.getElementById("content").value;
+    if (title == "" || content == "") {
+      alert("Please fill all the fields");
+      return false;
+    }
+    return true;
+  }
+</script>
+
+<%- include('./partials/footer')%>
